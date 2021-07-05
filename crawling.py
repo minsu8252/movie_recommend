@@ -1,3 +1,4 @@
+from bs4.element import PageElement
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -37,6 +38,28 @@ def genre_list(url):
     
     return genre_list
 
-url = "https://movie.naver.com/movie/point/af/list.nhn"
-genre_list_data = genre_list(url)
-print(genre_list_data)
+# url = "https://movie.naver.com/movie/point/af/list.nhn"
+# genre_list_data = genre_list(url)
+# print(genre_list_data)
+
+def get_user_list(url):
+    res = requests.get(url)
+    content = res.text
+    soup = BeautifulSoup(content, 'html5lib')
+
+    page_links = soup.select('a[href]')
+    page_link_list = []
+
+    for link in page_links:
+        if re.search(r'st=mcode&sword' and r'&target=after', link['href']):
+            target_url = "https://movie.naver.com" + str(link['href'])
+            page_link_list.append(target_url)
+    if len(page_link_list) != 1:
+        pop_number = len(page_link_list) -1
+        page_link_list.pop(pop_number)
+        
+    return page_link_list
+
+# url = "https://movie.naver.com/movie/point/af/list.nhn?st=mcode&sword=185949&target=after"
+# point_data = get_user_list(url)
+# print(point_data)
